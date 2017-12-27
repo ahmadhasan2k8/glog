@@ -900,8 +900,27 @@ void LogFileObject::FlushUnlocked(){
 }
 
 bool LogFileObject::CreateLogfile(const string& time_pid_string) {
-  string string_filename = base_filename_+filename_extension_+
-                           time_pid_string;
+  // string string_filename = base_filename_+filename_extension_+
+  //                         time_pid_string;
+  
+  string custom_file_name_head = "LOG_",custom_file_name_end = ".log";
+  if(base_filename_.find("INFO") != std::string::npos){
+		custom_file_name_head += "_info";
+  }
+  else if(base_filename_.find("WARNING") != std::string::npos){
+	  custom_file_name_head += "_warning";
+  }
+  else if(base_filename_.find("ERROR") != std::string::npos){
+	  custom_file_name_head += "_error";
+  }
+  else if(base_filename_.find("FATAL") != std::string::npos){
+	  custom_file_name_head += "_fatal";
+  }
+  else{
+	  custom_file_name_head += "_other"; 		
+  }
+string string_filename = custom_file_name_head + time_pid_string + custom_file_name_end;
+
   const char* filename = string_filename.c_str();
   int fd = open(filename, O_WRONLY | O_CREAT | O_EXCL, FLAGS_logfile_mode);
   if (fd == -1) return false;
